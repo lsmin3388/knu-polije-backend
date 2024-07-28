@@ -28,7 +28,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Token accessToken =  jwtTokenGenerator.generateAccessToken(authentication);
 
         response.addCookie(accessToken.cookie());
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("http://localhost:8080/login/oauth2/code/google");
 
         log.info("OAuth2 로그인에 성공하였습니다. 이메일 : {}",  oauth2User.getMember().getEmail());
         log.info("OAuth2 로그인에 성공하였습니다. Access Token : {}",  accessToken);
