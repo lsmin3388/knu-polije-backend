@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import com.knu_polije.project.http.CookieUtil;
 import com.knu_polije.project.jwt.dto.Token;
 import com.knu_polije.project.jwt.dto.TokenType;
 
@@ -47,6 +48,12 @@ public class JwtTokenGenerator {
 			.grantType(BEARER_TYPE)
 			.tokenType(TokenType.ACCESS_TOKEN)
 			.token(accessToken)
+			.cookie(CookieUtil.createCookie(
+				"Authorization-AccessToken",
+				accessToken,
+				14 * 24 * 60 * 60,
+				"/",
+				true))
 			.build();
 	}
 

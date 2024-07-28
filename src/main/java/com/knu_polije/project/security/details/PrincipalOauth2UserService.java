@@ -28,7 +28,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		Oauth2ResponseDto oauth2Response = oauth2ResponseMatcher.matcher(registrationId, oAuth2User);
 
-		Member member = memberService.saveOrUpdate(Member.builder()
+		Member member = memberService.saveOrReturn(Member.builder()
 			.email(oauth2Response.getEmail())
 			.role(Role.ROLE_USER)
 			.build());

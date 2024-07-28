@@ -19,7 +19,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.knu_polije.project.domain.member.service.MemberService;
+import com.knu_polije.project.jwt.provider.JwtTokenValidator;
+import com.knu_polije.project.security.details.PrincipalOauth2UserService;
 import com.knu_polije.project.security.filter.JwtAuthorizationFilter;
+import com.knu_polije.project.security.handler.Oauth2SuccessHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,8 +31,10 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenValidator jwtTokenValidator;
     private final MemberService memberService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
+    private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -43,9 +48,13 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests(request -> request.requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
-                .addFilterBefore(new JwtAuthorizationFilter(memberService, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthorizationFilter(memberService, jwtTokenValidator), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(withDefaults());
 
+        httpSecurity
+            .oauth2Login((oauth2) -> oauth2
+                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(principalOauth2UserService))
+                .successHandler(oauth2SuccessHandler));
         return httpSecurity.build();
     }
 

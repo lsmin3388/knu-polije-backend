@@ -2,7 +2,6 @@ package com.knu_polije.project.domain.member.service;
 
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +29,7 @@ public class MemberService {
 
     public Member saveOrReturn(Member member) {
         Optional<Member> optionalMember = memberRepository.findByEmail(member.getEmail());
-
-        if (optionalMember.isEmpty()) {
-            return memberRepository.save(member);
-        } else {
-            return memberRepository.save(member);
-        }
+		return optionalMember.orElseGet(() -> memberRepository.save(member));
     }
 
 }

@@ -12,6 +12,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.knu_polije.project.domain.member.entity.Member;
 
+import lombok.Getter;
+
+@Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
     private final Member member;
     private Map<String, Object> attributes;

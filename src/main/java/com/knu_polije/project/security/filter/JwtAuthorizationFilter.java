@@ -7,7 +7,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.knu_polije.project.domain.member.service.MemberService;
-import com.knu_polije.project.jwt.provider.JwtTokenGenerator;
 import com.knu_polije.project.jwt.provider.JwtTokenValidator;
 
 import jakarta.servlet.FilterChain;
