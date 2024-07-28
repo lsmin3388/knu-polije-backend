@@ -1,0 +1,38 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:30000/be_session
+    username: root
+    password: root
+
+  jwt:
+    secret: zs4rgXYzxeZv9EEcUgKZHrd6q2qZNXiMmcPYeYpCKk2Nif5H2r
+    authorities_key: auth
+    bearer-type: Bearer
+    access-token-expire-time: 864000000 # 10 days in milliseconds
+
+server:
+  servlet:
+    context-path: /api/v1
+    encoding:
+      charset: utf-8
+
+logging:
+  level:
+    org:
+    hibernate:
+      SQL: DEBUG
+    type:
+      descriptor:
+        sql:
+          BasicBinder: TRACE
