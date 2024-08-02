@@ -11,7 +11,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:30000/be_session
+    url: jdbc:mysql://localhost:30000/kp_database
     username: root
     password: root
 
@@ -21,9 +21,14 @@ spring:
     bearer-type: Bearer
     access-token-expire-time: 864000000 # 10 days in milliseconds
 
+  security:
+    oauth2:
+      client:
+        registration:
+
 server:
   servlet:
-    context-path: /api/v1
+#    context-path: /api/v1
     encoding:
       charset: utf-8
 

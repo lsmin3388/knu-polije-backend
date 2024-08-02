@@ -27,6 +27,7 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
+    @Transactional
     public Member saveOrReturn(Member member) {
         Optional<Member> optionalMember = memberRepository.findByEmail(member.getEmail());
 		return optionalMember.orElseGet(() -> memberRepository.save(member));
