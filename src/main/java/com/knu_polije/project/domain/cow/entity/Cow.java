@@ -12,10 +12,15 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Cow {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue
 	private Long id;
+
+	private Long cowNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
+
+	private String cowBreed;
+	private String cowWeight;
 }

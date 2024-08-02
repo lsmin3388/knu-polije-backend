@@ -12,4 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CowController {
 	private final CowService cowService;
+
+
 }
