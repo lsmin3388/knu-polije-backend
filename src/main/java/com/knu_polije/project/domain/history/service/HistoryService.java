@@ -1,5 +1,7 @@
 package com.knu_polije.project.domain.history.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +20,23 @@ public class HistoryService {
 	private final HistoryRepository historyRepository;
 
 	@Transactional
-	public void createHistory(Member member, Cow cow, CreateHistoryDto createHistoryDto) {
-		historyRepository.save(History.builder()
+	public History createHistory(Member member, Cow cow, CreateHistoryDto createHistoryDto) {
+		History newHistory = History.builder()
 			.member(member)
 			.cow(cow)
 			.detectType(createHistoryDto.detectType())
 			.resultValue(createHistoryDto.resultValue())
 			.resultPath(createHistoryDto.resultPath())
-			.build());
+			.build();
 
+		return historyRepository.save(newHistory);
 	}
+
+	public List<History> getHistoriesByMember(Member member) {
+		return historyRepository.findAllByMember(member);
+	}
+
+
+
 
 }

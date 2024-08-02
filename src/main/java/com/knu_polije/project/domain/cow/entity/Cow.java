@@ -9,8 +9,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cow {
 	@Id @GeneratedValue
 	private Long id;
@@ -23,4 +27,17 @@ public class Cow {
 
 	private String cowBreed;
 	private String cowWeight;
+
+	@Builder
+	public Cow(Long cowNumber, Member member, String cowBreed, String cowWeight) {
+		this.cowNumber = cowNumber;
+		this.member = member;
+		this.cowBreed = cowBreed;
+		this.cowWeight = cowWeight;
+	}
+
+	public void updateCow(String cowBreed, String cowWeight) {
+		this.cowBreed = cowBreed;
+		this.cowWeight = cowWeight;
+	}
 }
