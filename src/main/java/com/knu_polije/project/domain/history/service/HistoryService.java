@@ -20,23 +20,20 @@ public class HistoryService {
 	private final HistoryRepository historyRepository;
 
 	@Transactional
-	public History createHistory(Member member, Cow cow, CreateHistoryDto createHistoryDto) {
+	public void createHistory(Member member, Cow cow, CreateHistoryDto createHistoryDto) {
 		History newHistory = History.builder()
 			.member(member)
 			.cow(cow)
 			.detectType(createHistoryDto.detectType())
-			.resultValue(createHistoryDto.resultValue())
-			.resultPath(createHistoryDto.resultPath())
+			.inputImgName(createHistoryDto.inputImgUrl())
+			.outputImgName(createHistoryDto.outputImgUrl())
+			.outputData(createHistoryDto.outputData())
 			.build();
 
-		return historyRepository.save(newHistory);
+		historyRepository.save(newHistory);
 	}
 
 	public List<History> getHistoriesByMember(Member member) {
 		return historyRepository.findAllByMember(member);
 	}
-
-
-
-
 }

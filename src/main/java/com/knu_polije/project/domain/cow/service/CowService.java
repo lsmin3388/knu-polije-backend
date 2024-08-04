@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knu_polije.project.domain.cow.dto.CreateOrUpdateCowDto;
 import com.knu_polije.project.domain.cow.entity.Cow;
+import com.knu_polije.project.domain.cow.exception.CowErrorCode;
 import com.knu_polije.project.domain.cow.repository.CowRepository;
 import com.knu_polije.project.domain.member.entity.Member;
+import com.knu_polije.project.global.exception.GlobalException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class CowService {
 	private final CowRepository cowRepository;
 
-	public Cow createOrUpdateCow(Member member, Long cowNumber, CreateOrUpdateCowDto createOrUpdateCowDto) {
+	@Transactional
+	public Cow updateCow(Member member, Long cowNumber, CreateOrUpdateCowDto createOrUpdateCowDto) {
 		Optional<Cow> optionalCow = cowRepository.findByMemberAndCowNumber(member, cowNumber);
 
 		if (optionalCow.isPresent()) {
@@ -26,17 +29,22 @@ public class CowService {
 			cow.updateCow(createOrUpdateCowDto.cowBreed(), createOrUpdateCowDto.cowWeight());
 			return cow;
 		} else {
-			Cow newCow = Cow.builder()
-				.cowNumber(cowNumber)
-				.member(member)
-				.cowBreed(createOrUpdateCowDto.cowBreed())
-				.cowWeight(createOrUpdateCowDto.cowWeight())
-				.build();
-
-			return cowRepository.save(newCow);
+			throw new GlobalException(CowErrorCode.NOT_FOUND_COW);
 		}
 	}
 
+	@Transactional
+	public Cow getCowByCowNumberOrCreateCow(Member member, Long cowNumber) {
+		Optional<Cow> optionalCow = cowRepository.findByMemberAndCowNumber(member, cowNumber);
 
-
+		if (optionalCow.isEmpty()) {
+			Cow cow = Cow.builder()
+				.member(member)
+				.cowNumber(cowNumber)
+				.build();
+			return cowRepository.save(cow);
+		} else {
+			return optionalCow.get();
+		}
+	}
 }

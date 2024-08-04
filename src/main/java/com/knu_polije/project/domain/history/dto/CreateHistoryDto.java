@@ -4,6 +4,7 @@ import com.knu_polije.project.domain.history.entity.DetectType;
 
 public record CreateHistoryDto(
 	DetectType detectType,
-	String resultValue,
-	String resultPath
+	String inputImgUrl,
+	String outputImgUrl,
+	String outputData
 ) { }

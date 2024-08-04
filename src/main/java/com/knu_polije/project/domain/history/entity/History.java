@@ -34,15 +34,18 @@ public class History extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private DetectType detectType;
 
-	private String resultValue;
-	private String resultPath;
+	private String inputImgName;
+	private String outputImgName;
+	private String outputData;
 
 	@Builder
-	public History(Member member, Cow cow, DetectType detectType, String resultValue, String resultPath) {
+	public History(Member member, Cow cow, DetectType detectType, String inputImgName, String outputImgName,
+		String outputData) {
 		this.member = member;
 		this.cow = cow;
 		this.detectType = detectType;
-		this.resultValue = resultValue;
-		this.resultPath = resultPath;
+		this.inputImgName = inputImgName;
+		this.outputImgName = outputImgName;
+		this.outputData = outputData;
 	}
 }

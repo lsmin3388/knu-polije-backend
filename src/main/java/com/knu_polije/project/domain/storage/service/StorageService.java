@@ -32,6 +32,9 @@ public class StorageService {
             if (!FileUtil.isValidImageFile(image.getInputStream())) {
                 throw new GlobalException(StorageErrorCode.UNSUPPORTED_FILE_EXTENSION);
             }
+
+            Files.createDirectories(storageLocation);
+
             String randomizedFilename =
                     FileUtil.convertToRandomFilename(image.getOriginalFilename());
             Path destination = storageLocation.resolve(Paths.get(randomizedFilename)).normalize()
@@ -45,6 +48,7 @@ public class StorageService {
 
             return randomizedFilename;
         } catch (IOException exception) {
+            exception.printStackTrace();
             throw new GlobalException(StorageErrorCode.FAILED_FILE_STORE);
         }
     }
