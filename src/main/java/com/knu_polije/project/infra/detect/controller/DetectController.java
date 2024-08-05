@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.knu_polije.project.domain.cow.dto.ReadCowDto;
 import com.knu_polije.project.domain.cow.entity.Cow;
 import com.knu_polije.project.domain.cow.service.CowService;
 import com.knu_polije.project.domain.history.dto.CreateHistoryDto;
+import com.knu_polije.project.domain.history.dto.ReadHistoryDto;
 import com.knu_polije.project.domain.history.entity.DetectType;
 import com.knu_polije.project.domain.history.service.HistoryService;
 import com.knu_polije.project.domain.member.entity.Member;
@@ -25,14 +27,16 @@ import com.knu_polije.project.global.exception.GlobalException;
 import com.knu_polije.project.global.security.details.PrincipalDetails;
 import com.knu_polije.project.global.util.ApiUtil;
 import com.knu_polije.project.global.util.ImageDownloadUtil;
-import com.knu_polije.project.infra.detect.dto.BreedDetectResponse;
-import com.knu_polije.project.infra.detect.dto.WeightDetectResponse;
-import com.knu_polije.project.infra.detect.exception.StorageErrorCode;
+import com.knu_polije.project.infra.detect.dto.DetectResponse;
+import com.knu_polije.project.infra.detect.dto.flask.BreedDetectResponse;
+import com.knu_polije.project.infra.detect.dto.flask.WeightDetectResponse;
+import com.knu_polije.project.infra.detect.exception.DetectErrorCode;
 import com.knu_polije.project.infra.detect.service.DetectService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/detects")
 @RequiredArgsConstructor
@@ -43,27 +47,29 @@ public class DetectController {
 	private final CowService cowService;
 
 	private final MemberRepository memberRepository;
-	// @PostMapping("/images")
-	// public ResponseEntity<ApiUtil.ApiSuccessResult<String>> uploadImage(
-	// 	@RequestPart MultipartFile image
-	// ) {
 
 	@PostMapping("/breed")
-	// @PreAuthorize("isAuthenticated()")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<?> detectBreed(
 		@RequestPart("image") MultipartFile image,
-		@RequestParam Long cowNumber
-		// @AuthenticationPrincipal PrincipalDetails principalDetails
+		@RequestParam Long cowNumber,
+		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		// Member member = principalDetails.getMember();
-		Member member = memberRepository.findById(1L).get();
+		/* Get Member Object By Authorization */
+		Member member = principalDetails.getMember(); // memberRepository.findById(1L).get();
+
+		/* Get Cow Object By Member And CowNumber */
 		Cow cow = cowService.getCowByCowNumberOrCreateCow(member, cowNumber);
 
+		/* Store Image in Local Repository */
 		String storedFileName = storageService.storeImage(image);
-		BreedDetectResponse response = detectService.sendImageToServerForBreedDetect(storedFileName);
 
-		String outputImageUrl = response.getImageUrl();
-		String outputData = response.getResults().stream()
+		/* Send Image to Server for Breed Detect */
+		BreedDetectResponse breedDetectResponse = detectService.sendImageToServerForBreedDetect(storedFileName);
+
+		/* Process Response */
+		String outputImageUrl = breedDetectResponse.getImageUrl();
+		String outputData = breedDetectResponse.getResults().stream()
 			.map(BreedDetectResponse.ResultDto::getLabel)
 			.reduce((label1, label2) -> label1 + ", " + label2)
 			.orElse("");
@@ -72,12 +78,18 @@ public class DetectController {
 		try {
 			outputImgUri = ImageDownloadUtil.downloadImage(outputImageUrl);
 		} catch (IOException e) {
-			throw new GlobalException(StorageErrorCode.FILE_DOWNLOAD_ERROR);
+			throw new GlobalException(DetectErrorCode.FILE_DOWNLOAD_ERROR);
 		}
 
+		/* Create History */
 		CreateHistoryDto createHistoryDto = new CreateHistoryDto(DetectType.BREED, storedFileName, outputImgUri, outputData);
-		historyService.createHistory(member, cow, createHistoryDto);
+		ReadHistoryDto readHistoryDto = historyService.createHistory(member, cow, createHistoryDto);
 
+		/* Update Cow Data */
+		ReadCowDto readCowDto = cowService.updateCowBreed(member, cowNumber, outputData);
+
+		/* Response */
+		DetectResponse response = new DetectResponse(readCowDto, readHistoryDto);
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(ApiUtil.success(HttpStatus.OK, response));
@@ -85,29 +97,43 @@ public class DetectController {
 
 	@PostMapping("/weight")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<?> detectWeight(@RequestParam("image") MultipartFile image,
-		@RequestParam Long cowId,
-		@AuthenticationPrincipal PrincipalDetails principalDetails) {
-		Member member = principalDetails.getMember();
-		// Cow cow = cowService.getCowById(cowId);
-		Cow cow = null;
+	public ResponseEntity<?> detectWeight(
+		@RequestParam("image") MultipartFile image,
+		@RequestParam Long cowNumber,
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		/* Get Member Object By Authorization */
+		Member member = principalDetails.getMember(); // memberRepository.findById(1L).get();
 
+		/* Get Cow Object By Member And CowNumber */
+		Cow cow = cowService.getCowByCowNumberOrCreateCow(member, cowNumber);
+
+		/* Store Image in Local Repository */
 		String storedFileName = storageService.storeImage(image);
-		WeightDetectResponse response = detectService.sendImageToServerForWeightDetect(storedFileName);
 
-		String outputImageUrl = response.getImageUrl();
-		String outputData = String.valueOf(response.getTotalWeight());
+		/* Send Image to Server for Weight Detect */
+		WeightDetectResponse weightDetectResponse = detectService.sendImageToServerForWeightDetect(storedFileName);
+
+		/* Process Response */
+		String outputImageUrl = weightDetectResponse.getImageUrl();
+		String outputData = String.valueOf(weightDetectResponse.getTotalWeight());
 
 		String outputImgUri;
 		try {
 			outputImgUri = ImageDownloadUtil.downloadImage(outputImageUrl);
 		} catch (IOException e) {
-			throw new GlobalException(StorageErrorCode.FILE_DOWNLOAD_ERROR);
+			throw new GlobalException(DetectErrorCode.FILE_DOWNLOAD_ERROR);
 		}
 
+		/* Create History */
 		CreateHistoryDto createHistoryDto = new CreateHistoryDto(DetectType.WEIGHT, storedFileName, outputImgUri, outputData);
-		historyService.createHistory(member, cow, createHistoryDto);
+		ReadHistoryDto readHistoryDto = historyService.createHistory(member, cow, createHistoryDto);
 
+		/* Update Cow Data */
+		ReadCowDto readCowDto = cowService.updateCowWeight(member, cowNumber, outputData);
+
+		/* Response */
+		DetectResponse response = new DetectResponse(readCowDto, readHistoryDto);
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(ApiUtil.success(HttpStatus.OK, response));

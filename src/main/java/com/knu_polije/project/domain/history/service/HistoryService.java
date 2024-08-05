@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knu_polije.project.domain.cow.entity.Cow;
 import com.knu_polije.project.domain.history.dto.CreateHistoryDto;
+import com.knu_polije.project.domain.history.dto.ReadHistoryDto;
 import com.knu_polije.project.domain.history.entity.History;
 import com.knu_polije.project.domain.history.repository.HistoryRepository;
 import com.knu_polije.project.domain.member.entity.Member;
@@ -20,7 +21,7 @@ public class HistoryService {
 	private final HistoryRepository historyRepository;
 
 	@Transactional
-	public void createHistory(Member member, Cow cow, CreateHistoryDto createHistoryDto) {
+	public ReadHistoryDto createHistory(Member member, Cow cow, CreateHistoryDto createHistoryDto) {
 		History newHistory = History.builder()
 			.member(member)
 			.cow(cow)
@@ -30,7 +31,8 @@ public class HistoryService {
 			.outputData(createHistoryDto.outputData())
 			.build();
 
-		historyRepository.save(newHistory);
+		History savedHistory = historyRepository.save(newHistory);
+		return ReadHistoryDto.of(savedHistory);
 	}
 
 	public List<History> getHistoriesByMember(Member member) {

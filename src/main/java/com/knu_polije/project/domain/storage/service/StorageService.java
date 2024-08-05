@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,7 @@ public class StorageService {
         try {
             Path path = load(fileName);
             Resource resource = new UrlResource(path.toUri());
+
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {

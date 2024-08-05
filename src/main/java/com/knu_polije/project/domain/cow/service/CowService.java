@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.knu_polije.project.domain.cow.dto.CreateOrUpdateCowDto;
+import com.knu_polije.project.domain.cow.dto.ReadCowDto;
 import com.knu_polije.project.domain.cow.entity.Cow;
 import com.knu_polije.project.domain.cow.exception.CowErrorCode;
 import com.knu_polije.project.domain.cow.repository.CowRepository;
@@ -21,13 +22,26 @@ public class CowService {
 	private final CowRepository cowRepository;
 
 	@Transactional
-	public Cow updateCow(Member member, Long cowNumber, CreateOrUpdateCowDto createOrUpdateCowDto) {
+	public ReadCowDto updateCowBreed(Member member, Long cowNumber, String cowBreed) {
 		Optional<Cow> optionalCow = cowRepository.findByMemberAndCowNumber(member, cowNumber);
 
 		if (optionalCow.isPresent()) {
 			Cow cow = optionalCow.get();
-			cow.updateCow(createOrUpdateCowDto.cowBreed(), createOrUpdateCowDto.cowWeight());
-			return cow;
+			cow.updateCowBreed(cowBreed);
+			return ReadCowDto.of(cow);
+		} else {
+			throw new GlobalException(CowErrorCode.NOT_FOUND_COW);
+		}
+	}
+
+	@Transactional
+	public ReadCowDto updateCowWeight(Member member, Long cowNumber, String cowWeight) {
+		Optional<Cow> optionalCow = cowRepository.findByMemberAndCowNumber(member, cowNumber);
+
+		if (optionalCow.isPresent()) {
+			Cow cow = optionalCow.get();
+			cow.updateCowWeight(cowWeight);
+			return ReadCowDto.of(cow);
 		} else {
 			throw new GlobalException(CowErrorCode.NOT_FOUND_COW);
 		}

@@ -21,7 +21,7 @@ public class ImageDownloadUtil {
 				throw new IOException("Failed to read image from URL: " + imageUrl);
 			}
 
-			String fileName = Paths.get(imageUrl).getFileName().toString();
+			String fileName = FileUtil.convertToRandomFilename(imageUrl);
 			Path destination = downloadLocation.resolve(fileName).normalize().toAbsolutePath();
 			if (!destination.getParent().equals(downloadLocation.toAbsolutePath())) {
 				throw new IOException("Invalid file path for image download.");

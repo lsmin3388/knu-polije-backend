@@ -1,4 +1,4 @@
-package com.knu_polije.project.infra.detect.dto;
+package com.knu_polije.project.infra.detect.dto.flask;
 
 import java.util.List;
 
