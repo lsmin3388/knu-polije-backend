@@ -3,6 +3,8 @@ package com.knu_polije.project.domain.member.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minidev.json.annotate.JsonIgnore;
+
 import com.knu_polije.project.domain.cow.entity.Cow;
 import com.knu_polije.project.domain.history.entity.History;
 
@@ -51,7 +53,7 @@ public class Member {
     private boolean isAccountLocked;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Cow> cowList = new ArrayList<>();
+    private List<Cow> cows = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<History> historyList = new ArrayList<>();

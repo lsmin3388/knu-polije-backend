@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.knu_polije.project.domain.member.dto.ReadMemberDto;
 import com.knu_polije.project.domain.member.entity.Member;
 import com.knu_polije.project.global.security.details.PrincipalDetails;
 import com.knu_polije.project.global.util.ApiUtil;
@@ -16,15 +17,18 @@ import com.knu_polije.project.global.util.ApiUtil.ApiSuccessResult;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/member")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class MemberController {
 
-	@GetMapping
+	@GetMapping("/member")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<ApiSuccessResult<Member>> read(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+	public ResponseEntity<ApiSuccessResult<ReadMemberDto>> read(
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		ReadMemberDto response = ReadMemberDto.of(principalDetails.getMember());
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(ApiUtil.success(HttpStatus.OK, principalDetails.getMember()));
+			.body(ApiUtil.success(HttpStatus.OK, response));
 	}
 }

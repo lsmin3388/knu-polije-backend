@@ -42,8 +42,8 @@ server:
       charset: utf-8
 
 endpoints:
-  breed-detect: http://host.docker.internal:5000/predict
-  weight-detect: http://host.docker.internal:5000/api/f1/weight-detect
+  breed-detect: http://host.docker.internal:5000/predict_breed
+  weight-detect: http://host.docker.internal:5000/predict_weight
 
 logging:
   level:

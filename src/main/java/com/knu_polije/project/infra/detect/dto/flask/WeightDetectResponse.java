@@ -6,9 +6,9 @@ import lombok.Getter;
 
 @Getter
 public class WeightDetectResponse {
-	private String imageUrl;
+	private String image_url;
 	private List<ResultDto> results;
-	private double totalWeight;
+	private double total_weight;
 
 	@Getter
 	public static class ResultDto {

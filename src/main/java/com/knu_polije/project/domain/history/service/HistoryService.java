@@ -35,7 +35,11 @@ public class HistoryService {
 		return ReadHistoryDto.of(savedHistory);
 	}
 
-	public List<History> getHistoriesByMember(Member member) {
-		return historyRepository.findAllByMember(member);
+	public List<ReadHistoryDto> getHistoriesByMember(Member member) {
+		return ReadHistoryDto.of(historyRepository.findAllByMember(member));
+	}
+
+	public List<ReadHistoryDto> getAllHistories() {
+		return ReadHistoryDto.of(historyRepository.findAll());
 	}
 }

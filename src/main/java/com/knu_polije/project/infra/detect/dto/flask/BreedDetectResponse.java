@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class BreedDetectResponse {
-	private String imageUrl;
+	private String image_url;
 	private List<ResultDto> results;
 
 	@Getter

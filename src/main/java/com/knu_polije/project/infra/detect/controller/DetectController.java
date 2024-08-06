@@ -49,14 +49,15 @@ public class DetectController {
 	private final MemberRepository memberRepository;
 
 	@PostMapping("/breed")
-	@PreAuthorize("isAuthenticated()")
+	// @PreAuthorize("isAuthenticated()")
 	public ResponseEntity<?> detectBreed(
 		@RequestPart("image") MultipartFile image,
-		@RequestParam Long cowNumber,
-		@AuthenticationPrincipal PrincipalDetails principalDetails
+		@RequestParam Long cowNumber
+		// @AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		/* Get Member Object By Authorization */
-		Member member = principalDetails.getMember(); // memberRepository.findById(1L).get();
+		// Member member = principalDetails.getMember(); // memberRepository.findById(1L).get();
+		Member member = memberRepository.findById(1L).get();
 
 		/* Get Cow Object By Member And CowNumber */
 		Cow cow = cowService.getCowByCowNumberOrCreateCow(member, cowNumber);
@@ -68,7 +69,7 @@ public class DetectController {
 		BreedDetectResponse breedDetectResponse = detectService.sendImageToServerForBreedDetect(storedFileName);
 
 		/* Process Response */
-		String outputImageUrl = breedDetectResponse.getImageUrl();
+		String outputImageUrl = breedDetectResponse.getImage_url();
 		String outputData = breedDetectResponse.getResults().stream()
 			.map(BreedDetectResponse.ResultDto::getLabel)
 			.reduce((label1, label2) -> label1 + ", " + label2)
@@ -96,14 +97,15 @@ public class DetectController {
 	}
 
 	@PostMapping("/weight")
-	@PreAuthorize("isAuthenticated()")
+	// @PreAuthorize("isAuthenticated()")
 	public ResponseEntity<?> detectWeight(
 		@RequestParam("image") MultipartFile image,
-		@RequestParam Long cowNumber,
-		@AuthenticationPrincipal PrincipalDetails principalDetails
+		@RequestParam Long cowNumber
+		// @AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		/* Get Member Object By Authorization */
-		Member member = principalDetails.getMember(); // memberRepository.findById(1L).get();
+		// Member member = principalDetails.getMember(); // memberRepository.findById(1L).get();
+		Member member = memberRepository.findById(1L).get();
 
 		/* Get Cow Object By Member And CowNumber */
 		Cow cow = cowService.getCowByCowNumberOrCreateCow(member, cowNumber);
@@ -115,8 +117,8 @@ public class DetectController {
 		WeightDetectResponse weightDetectResponse = detectService.sendImageToServerForWeightDetect(storedFileName);
 
 		/* Process Response */
-		String outputImageUrl = weightDetectResponse.getImageUrl();
-		String outputData = String.valueOf(weightDetectResponse.getTotalWeight());
+		String outputImageUrl = weightDetectResponse.getImage_url();
+		String outputData = String.valueOf(weightDetectResponse.getTotal_weight());
 
 		String outputImgUri;
 		try {

@@ -1,5 +1,7 @@
 package com.knu_polije.project.domain.history.dto;
 
+import java.util.List;
+
 import com.knu_polije.project.domain.history.entity.History;
 
 public record ReadHistoryDto(
@@ -14,5 +16,11 @@ public record ReadHistoryDto(
 			history.getInputImgName(), history.getOutputImgName(),
 			history.getOutputData()
 		);
+	}
+
+	public static List<ReadHistoryDto> of(List<History> histories) {
+		return histories.stream()
+			.map(ReadHistoryDto::of)
+			.toList();
 	}
 }
