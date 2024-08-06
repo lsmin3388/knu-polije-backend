@@ -12,13 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.knu_polije.project.domain.storage.exception.StorageErrorCode;
 import com.knu_polije.project.domain.storage.service.StorageService;
 import com.knu_polije.project.global.config.EndpointProperties;
 import com.knu_polije.project.global.exception.GlobalException;
-import com.knu_polije.project.infra.detect.dto.flask.BreedDetectResponse;
-import com.knu_polije.project.infra.detect.dto.flask.WeightDetectResponse;
+import com.knu_polije.project.global.util.ImageDownloadUtil;
+import com.knu_polije.project.infra.detect.dto.BreedDetectResponse;
+import com.knu_polije.project.infra.detect.dto.DetectResponse;
+import com.knu_polije.project.infra.detect.dto.WeightDetectResponse;
 import com.knu_polije.project.infra.detect.exception.DetectErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,32 @@ public class DetectService {
 	private final RestTemplate restTemplate;
 	private final StorageService storageService;
 	private final EndpointProperties endpointProperties;
+
+	public DetectResponse handleDetection(MultipartFile image, boolean isBreedDetection) {
+		/* Store Image in Local Repository */
+		String storedFileName = storageService.storeImage(image);
+
+		/* Send Image to Server for Detection */
+		String outputImageUrl;
+		if (isBreedDetection) {
+			BreedDetectResponse breedDetectResponse = sendImageToServerForBreedDetect(storedFileName);
+			outputImageUrl = breedDetectResponse.getImage_url();
+		} else {
+			WeightDetectResponse weightDetectResponse = sendImageToServerForWeightDetect(storedFileName);
+			outputImageUrl = weightDetectResponse.getImage_url();
+		}
+
+		/* Download the Output Image */
+		String outputImgUri;
+		try {
+			outputImgUri = ImageDownloadUtil.downloadImage(outputImageUrl);
+		} catch (IOException e) {
+			throw new GlobalException(DetectErrorCode.FILE_DOWNLOAD_ERROR);
+		}
+
+		/* Response */
+		return new DetectResponse(storedFileName, outputImgUri, null);
+	}
 
 	public BreedDetectResponse sendImageToServerForBreedDetect(String fileName) {
 		return sendImageToServer(fileName, endpointProperties.getBreedDetect(), BreedDetectResponse.class);
