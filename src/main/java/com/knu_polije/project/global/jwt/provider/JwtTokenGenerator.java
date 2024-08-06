@@ -9,9 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import com.knu_polije.project.global.util.CookieUtil;
 import com.knu_polije.project.global.jwt.dto.Token;
 import com.knu_polije.project.global.jwt.dto.TokenType;
+import com.knu_polije.project.global.util.CookieUtil;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

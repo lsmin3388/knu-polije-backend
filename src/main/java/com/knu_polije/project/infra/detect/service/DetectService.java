@@ -35,21 +35,31 @@ public class DetectService {
 	private final StorageService storageService;
 	private final EndpointProperties endpointProperties;
 
-	public DetectResponse handleDetection(MultipartFile image, boolean isBreedDetection) {
+	public DetectResponse<BreedDetectResponse> handleBreedDetection(MultipartFile image) {
+		return handleDetection(image, endpointProperties.getBreedDetect(), BreedDetectResponse.class);
+	}
+
+	public DetectResponse<WeightDetectResponse> handleWeightDetection(MultipartFile image) {
+		return handleDetection(image, endpointProperties.getWeightDetect(), WeightDetectResponse.class);
+	}
+
+	private <T> DetectResponse<T> handleDetection(MultipartFile image, String serverUrl, Class<T> responseType) {
 		/* Store Image in Local Repository */
 		String storedFileName = storageService.storeImage(image);
 
 		/* Send Image to Server for Detection */
-		String outputImageUrl;
-		if (isBreedDetection) {
-			BreedDetectResponse breedDetectResponse = sendImageToServerForBreedDetect(storedFileName);
-			outputImageUrl = breedDetectResponse.getImage_url();
-		} else {
-			WeightDetectResponse weightDetectResponse = sendImageToServerForWeightDetect(storedFileName);
-			outputImageUrl = weightDetectResponse.getImage_url();
-		}
+		T result = sendImageToServer(storedFileName, serverUrl, responseType);
 
 		/* Download the Output Image */
+		String outputImageUrl;
+		if (result instanceof BreedDetectResponse) {
+			outputImageUrl = ((BreedDetectResponse) result).getImage_url();
+		} else if (result instanceof WeightDetectResponse) {
+			outputImageUrl = ((WeightDetectResponse) result).getImage_url();
+		} else {
+			throw new IllegalArgumentException("Unsupported detection response type");
+		}
+
 		String outputImgUri;
 		try {
 			outputImgUri = ImageDownloadUtil.downloadImage(outputImageUrl);
@@ -58,15 +68,7 @@ public class DetectService {
 		}
 
 		/* Response */
-		return new DetectResponse(storedFileName, outputImgUri, null);
-	}
-
-	public BreedDetectResponse sendImageToServerForBreedDetect(String fileName) {
-		return sendImageToServer(fileName, endpointProperties.getBreedDetect(), BreedDetectResponse.class);
-	}
-
-	public WeightDetectResponse sendImageToServerForWeightDetect(String fileName) {
-		return sendImageToServer(fileName, endpointProperties.getWeightDetect(), WeightDetectResponse.class);
+		return new DetectResponse<>(storedFileName, outputImgUri, result);
 	}
 
 	private <T> T sendImageToServer(String fileName, String serverUrl, Class<T> responseType) {

@@ -12,6 +12,5 @@ public class BreedDetectResponse {
 	@Getter
 	public static class ResultDto {
 		private String label;
-
 	}
 }

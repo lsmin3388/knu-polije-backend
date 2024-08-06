@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.knu_polije.project.domain.member.dto.ReadMemberDto;
-import com.knu_polije.project.domain.member.entity.Member;
 import com.knu_polije.project.global.security.details.PrincipalDetails;
 import com.knu_polije.project.global.util.ApiUtil;
 import com.knu_polije.project.global.util.ApiUtil.ApiSuccessResult;

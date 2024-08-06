@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.knu_polije.project.global.util.ApiUtil;
+import com.knu_polije.project.global.util.ApiUtil.ApiSuccessResult;
+import com.knu_polije.project.infra.detect.dto.BreedDetectResponse;
 import com.knu_polije.project.infra.detect.dto.DetectResponse;
+import com.knu_polije.project.infra.detect.dto.WeightDetectResponse;
 import com.knu_polije.project.infra.detect.service.DetectService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +28,10 @@ public class DetectController {
 
 	@PostMapping("/breed")
 	// @PreAuthorize("isAuthenticated()")
-	public ResponseEntity<?> detectBreed(@RequestPart("image") MultipartFile image) {
-		DetectResponse response = detectService.handleDetection(image, true);
+	public ResponseEntity<ApiSuccessResult<DetectResponse<BreedDetectResponse>>> detectBreed(
+		@RequestPart("image") MultipartFile image
+	) {
+		DetectResponse<BreedDetectResponse> response = detectService.handleBreedDetection(image);
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(ApiUtil.success(HttpStatus.OK, response));
@@ -34,8 +39,10 @@ public class DetectController {
 
 	@PostMapping("/weight")
 	// @PreAuthorize("isAuthenticated()")
-	public ResponseEntity<?> detectWeight(@RequestParam("image") MultipartFile image) {
-		DetectResponse response = detectService.handleDetection(image, false);
+	public ResponseEntity<ApiSuccessResult<DetectResponse<WeightDetectResponse>>> detectWeight(
+		@RequestParam("image") MultipartFile image
+	) {
+		DetectResponse<WeightDetectResponse> response = detectService.handleWeightDetection(image);
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(ApiUtil.success(HttpStatus.OK, response));

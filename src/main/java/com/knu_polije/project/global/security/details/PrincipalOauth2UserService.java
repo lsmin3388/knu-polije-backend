@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.knu_polije.project.domain.member.entity.Member;
 import com.knu_polije.project.domain.member.entity.Role;
 import com.knu_polije.project.domain.member.service.MemberService;
-import com.knu_polije.project.global.security.dto.Oauth2ResponseMatcher;
 import com.knu_polije.project.global.security.dto.Oauth2ResponseDto;
+import com.knu_polije.project.global.security.dto.Oauth2ResponseMatcher;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
