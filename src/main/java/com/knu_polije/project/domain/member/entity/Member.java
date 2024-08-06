@@ -52,12 +52,6 @@ public class Member {
     @Column(name = "locked")
     private boolean isAccountLocked;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Cow> cows = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<History> historyList = new ArrayList<>();
-
     @Builder
     public Member(String email, String password, Role role, String name, boolean isAccountExpired, boolean isAccountLocked) {
         this.email = email;
