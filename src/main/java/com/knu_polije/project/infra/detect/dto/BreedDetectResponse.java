@@ -12,5 +12,20 @@ public class BreedDetectResponse {
 	@Getter
 	public static class ResultDto {
 		private String label;
+
+		@Override
+		public String toString() {
+			return "ResultDto{" +
+				"label='" + label + '\'' +
+				'}';
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "BreedDetectResponse{" +
+			"image_url='" + image_url + '\'' +
+			", results=" + results +
+			'}';
 	}
 }

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class EndpointProperties {
 	private String breedDetect;
 	private String weightDetect;
+	private String miniatureWeightDetect;
 }

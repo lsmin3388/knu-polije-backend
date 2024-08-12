@@ -16,5 +16,22 @@ public class WeightDetectResponse {
 		private String label;
 		private double weight;
 
+		@Override
+		public String toString() {
+			return "ResultDto{" +
+				"bbox=" + bbox +
+				", label='" + label + '\'' +
+				", weight=" + weight +
+				'}';
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "WeightDetectResponse{" +
+			"image_url='" + image_url + '\'' +
+			", results=" + results +
+			", total_weight=" + total_weight +
+			'}';
 	}
 }

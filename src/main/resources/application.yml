@@ -11,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show-sql: true
@@ -44,6 +44,7 @@ server:
 endpoints:
   breed-detect: http://host.docker.internal:5000/predict_breed
   weight-detect: http://host.docker.internal:5000/predict_weight
+  miniature-weight-detect: http://host.docker.internal:5000/predict_miniature_weight
 
 logging:
   level:

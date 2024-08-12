@@ -2,6 +2,7 @@ package com.knu_polije.project.infra.detect.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +28,7 @@ public class DetectController {
 	private final DetectService detectService;
 
 	@PostMapping("/breed")
-	// @PreAuthorize("isAuthenticated()")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiSuccessResult<DetectResponse<BreedDetectResponse>>> detectBreed(
 		@RequestPart("image") MultipartFile image
 	) {
@@ -38,11 +39,22 @@ public class DetectController {
 	}
 
 	@PostMapping("/weight")
-	// @PreAuthorize("isAuthenticated()")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiSuccessResult<DetectResponse<WeightDetectResponse>>> detectWeight(
 		@RequestParam("image") MultipartFile image
 	) {
 		DetectResponse<WeightDetectResponse> response = detectService.handleWeightDetection(image);
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.body(ApiUtil.success(HttpStatus.OK, response));
+	}
+
+	@PostMapping("/miniature_weight")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<ApiSuccessResult<DetectResponse<WeightDetectResponse>>> detectMiniatureWeight(
+		@RequestParam("image") MultipartFile image
+	) {
+		DetectResponse<WeightDetectResponse> response = detectService.handleMiniatureWeightDetection(image);
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(ApiUtil.success(HttpStatus.OK, response));

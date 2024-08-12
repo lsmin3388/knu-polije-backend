@@ -43,12 +43,18 @@ public class DetectService {
 		return handleDetection(image, endpointProperties.getWeightDetect(), WeightDetectResponse.class);
 	}
 
+	public DetectResponse<WeightDetectResponse> handleMiniatureWeightDetection(MultipartFile image) {
+		return handleDetection(image, endpointProperties.getMiniatureWeightDetect(), WeightDetectResponse.class);
+	}
+
 	private <T> DetectResponse<T> handleDetection(MultipartFile image, String serverUrl, Class<T> responseType) {
 		/* Store Image in Local Repository */
 		String storedFileName = storageService.storeImage(image);
 
 		/* Send Image to Server for Detection */
 		T result = sendImageToServer(storedFileName, serverUrl, responseType);
+		log.info("Successfully sent image to server for detection. (Time: {})", System.currentTimeMillis());
+		log.info("Detection Result: {}", result.toString());
 
 		/* Download the Output Image */
 		String outputImageUrl;
