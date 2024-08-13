@@ -23,7 +23,7 @@ select_build_type() {
 
   case $build_type in
     1) ENV_FILE="$DEVELOP_ENV_FILE" ;;
-    2) ENV_FILE="$RELEASE_ENV_FILE" && exit 1 ;;
+    2) ENV_FILE="$RELEASE_ENV_FILE" ;;
     *) echo "deploy.sh: Invalid choice. Exiting script." && exit 1 ;;
   esac
 }

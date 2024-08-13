@@ -609,3 +609,5 @@ gradle-app.setting
 
 # For secure
 .env.*
+
+src-detect/yolov7

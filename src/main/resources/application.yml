@@ -42,9 +42,9 @@ server:
       charset: utf-8
 
 endpoints:
-  breed-detect: http://host.docker.internal:5000/predict_breed
-  weight-detect: http://host.docker.internal:5000/predict_weight
-  miniature-weight-detect: http://host.docker.internal:5000/predict_miniature_weight
+  breed-detect: http://${FLASK_HOST}:${FLASK_PORT}/predict_breed
+  weight-detect: http://${FLASK_HOST}:${FLASK_PORT}/predict_weight
+  miniature-weight-detect: http://${FLASK_HOST}:${FLASK_PORT}/predict_miniature_weight
 
 logging:
   level:

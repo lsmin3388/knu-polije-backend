@@ -17,14 +17,33 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
       - JWT_SECRET=${JWT_SECRET}
+      - FLASK_HOST=${FLASK_HOST}
+      - FLASK_PORT=${FLASK_PORT}
     depends_on:
       - database
+      - ai_app
     expose:
       - ${SPRING_PORT}
     ports:
       - ${SPRING_PORT}:${SPRING_PORT}
     restart: always
-#    network_mode: "host"
+    networks:
+      - kp-network
+    volumes:
+      - stocodi-storage:/storage
+
+  ai_app:
+    build:
+      context: src-detect
+      dockerfile: Dockerfile
+    container_name: kp-server-2
+    restart: always
+    expose:
+      - ${FLASK_PORT}
+    ports:
+      - ${FLASK_PORT}:${FLASK_PORT}
+    networks:
+      - kp-network
 
   database:
     image: postgres:latest
@@ -38,8 +57,14 @@ services:
     ports:
       - ${DB_PORT}:${DB_PORT}
     restart: always
+    networks:
+      - kp-network
     volumes:
       - kp-database:/var/lib/postgresql/data
+
+networks:
+  kp-network:
+    driver: bridge
 
 volumes:
   kp-database:
