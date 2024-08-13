@@ -30,7 +30,7 @@ services:
     networks:
       - kp-network
     volumes:
-      - stocodi-storage:/storage
+      - kp-storage:/storage
 
   ai_app:
     build:
@@ -68,3 +68,4 @@ networks:
 
 volumes:
   kp-database:
+  kp-storage:
