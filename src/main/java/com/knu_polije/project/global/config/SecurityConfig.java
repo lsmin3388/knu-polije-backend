@@ -59,7 +59,12 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://kpcowell.site"));
+        configuration.setAllowedOrigins(List.of(
+            "https://kpcowell.site",
+            "http://kpcowell.site",
+            "https://www.kpcowell.site",
+            "http://www.kpcowell.site"
+        ));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));

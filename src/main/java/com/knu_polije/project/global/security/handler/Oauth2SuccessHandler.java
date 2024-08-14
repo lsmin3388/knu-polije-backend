@@ -30,7 +30,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.addCookie(accessToken.cookie());
         // response.sendRedirect("http://localhost/board");
-        response.sendRedirect("http://kpcowell.site");
+        response.sendRedirect("https://kpcowell.site");
 
         log.info("OAuth2 로그인에 성공하였습니다. 이메일 : {}",  oauth2User.getMember().getEmail());
         log.info("OAuth2 로그인에 성공하였습니다. Access Token : {}",  accessToken);
