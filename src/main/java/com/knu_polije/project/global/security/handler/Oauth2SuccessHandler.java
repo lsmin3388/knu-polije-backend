@@ -29,7 +29,8 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Token accessToken =  jwtTokenGenerator.generateAccessToken(authentication);
 
         response.addCookie(accessToken.cookie());
-        response.sendRedirect("http://localhost/board");
+        // response.sendRedirect("http://localhost/board");
+        response.sendRedirect("http://kpcowell.site");
 
         log.info("OAuth2 로그인에 성공하였습니다. 이메일 : {}",  oauth2User.getMember().getEmail());
         log.info("OAuth2 로그인에 성공하였습니다. Access Token : {}",  accessToken);
