@@ -14,6 +14,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.knu_polije.project.domain.history.service.HistoryService;
+import com.knu_polije.project.domain.member.entity.Member;
 import com.knu_polije.project.domain.storage.exception.StorageErrorCode;
 import com.knu_polije.project.domain.storage.service.StorageService;
 import com.knu_polije.project.global.config.EndpointProperties;
@@ -33,21 +35,22 @@ import lombok.extern.slf4j.Slf4j;
 public class DetectService {
 	private final RestTemplate restTemplate;
 	private final StorageService storageService;
+	private final HistoryService historyService;
 	private final EndpointProperties endpointProperties;
 
-	public DetectResponse<BreedDetectResponse> handleBreedDetection(MultipartFile image) {
-		return handleDetection(image, endpointProperties.getBreedDetect(), BreedDetectResponse.class);
+	public DetectResponse<BreedDetectResponse> handleBreedDetection(Member member, MultipartFile image) {
+		return handleDetection(member, image, endpointProperties.getBreedDetect(), BreedDetectResponse.class);
 	}
 
-	public DetectResponse<WeightDetectResponse> handleWeightDetection(MultipartFile image) {
-		return handleDetection(image, endpointProperties.getWeightDetect(), WeightDetectResponse.class);
+	public DetectResponse<WeightDetectResponse> handleWeightDetection(Member member, MultipartFile image) {
+		return handleDetection(member, image, endpointProperties.getWeightDetect(), WeightDetectResponse.class);
 	}
 
-	public DetectResponse<WeightDetectResponse> handleMiniatureWeightDetection(MultipartFile image) {
-		return handleDetection(image, endpointProperties.getMiniatureWeightDetect(), WeightDetectResponse.class);
+	public DetectResponse<WeightDetectResponse> handleMiniatureWeightDetection(Member member, MultipartFile image) {
+		return handleDetection(member, image, endpointProperties.getMiniatureWeightDetect(), WeightDetectResponse.class);
 	}
 
-	private <T> DetectResponse<T> handleDetection(MultipartFile image, String serverUrl, Class<T> responseType) {
+	private <T> DetectResponse<T> handleDetection(Member member, MultipartFile image, String serverUrl, Class<T> responseType) {
 		/* Store Image in Local Repository */
 		String storedFileName = storageService.storeImage(image);
 
@@ -72,6 +75,9 @@ public class DetectService {
 		} catch (IOException e) {
 			throw new GlobalException(DetectErrorCode.FILE_DOWNLOAD_ERROR);
 		}
+
+		/* Save History */
+		historyService.addHistory(member, storedFileName, outputImgUri, result.toString());
 
 		/* Response */
 		return new DetectResponse<>(storedFileName, outputImgUri, result);
